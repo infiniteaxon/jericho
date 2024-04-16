@@ -6,7 +6,7 @@ def main():
     parser = argparse.ArgumentParser(description="Password Variant Generator")
     parser.add_argument('-i', '--input', type=str, help="Input file with base passwords")
     parser.add_argument('-o', '--output', type=str, default="wordlist.txt", help="Output file for password variants")
-    parser.add_argument('-l', '--level', type=int, choices=range(1, 5), default=1, help="Level of munging (1-4)")
+    parser.add_argument('-l', '--level', type=int, choices=range(1, 6), default=1, help="Level of munging (1-5)")
     parser.add_argument('-v', '--verbose', action='store_true', help="Verbose mode: display processing details")
     args = parser.parse_args()
 
@@ -22,7 +22,7 @@ def main():
             print(f"Error: Input file {args.input} not found.")
             return
     else:
-        passwords = ['password']  # Default password list if no file provided
+        passwords = ['pass']  # Default password list if no file provided
 
     # Generate variants for each password
     for password in passwords:
@@ -33,3 +33,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
