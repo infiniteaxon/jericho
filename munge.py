@@ -1,5 +1,5 @@
 from colorama import Fore, Style, init
-import os
+from itertools import product
 
 # Initialize Colorama
 init(autoreset=True)
@@ -29,8 +29,6 @@ def write_to_file(variants, output_file):
             file.write(f"{variant}\n")
 
 def character_substitutions(password, output_file, verbose):
-    from itertools import product
-
     # Generate all possible substitutions
     def generate_all_combinations(pwd):
         options = []
@@ -51,44 +49,92 @@ def level_2_patterns(variants, output_file, verbose):
     level_2 = set()
     for variant in variants:
         for number in number_patterns:
-            level_2.add(variant + number)
+            vn = variant + number
+            level_2.add(vn)
             level_2.add(number + variant)
+            level_2.add(number + vn)
     write_to_file(level_2, output_file)
     if verbose:
         print(f"Level 2 Variations: {len(level_2)}")
+    return level_2
 
 def level_3_patterns(variants, output_file, verbose):
     level_3 = set()
     for variant in variants:
         for char in special_chars:
-            level_3.add(char + variant)
+            cv = char + variant
+            cc = char + char
+            level_3.add(cv)
             level_3.add(variant + char)
+            level_3.add(cv + char)
+            level_3.add(char + cv + cc)
+            level_3.add(cv + cc)
+            level_3.add(char + cv + char)
     write_to_file(level_3, output_file)
     if verbose:
         print(f"Level 3 Variations: {len(level_3)}")
+    return level_3
 
 def level_4_patterns(variants, output_file, verbose):
     level_4 = set()
     for variant in variants:
         for number in number_patterns:
             for char in special_chars:
-                level_4.add(char + variant + number)
-                level_4.add(number + char + variant)
-                level_4.add(variant + number + char)
+                cvn = char + variant + number
+                nc = number + char
+                level_4.add(cvn)
+                level_4.add(nc + variant)
+                level_4.add(variant + nc)
+                level_4.add(cvn + char)
+                level_4.add(char + number + variant + nc)
+
     write_to_file(level_4, output_file)
     if verbose:
         print(f"Level 4 Variations: {len(level_4)}")
+    return level_4
+
+def level_5_patterns(variants, output_file, verbose):
+    level_5 = set()
+    for variant in variants:
+        for number in number_patterns:
+            for char in special_chars:
+                cn = char + number
+                nc = number + char
+                cnc = cn + char
+                ncn = nc + number
+                level_5.add(cn + variant)
+                level_5.add(variant + nc)
+                level_5.add(variant + cnc)
+                level_5.add(variant + ncn)
+                level_5.add(cn + variant + cnc)
+                level_5.add(nc + variant + cnc)
+                level_5.add(cnc + variant + nc)
+                level_5.add(cnc + variant + cn)
+                level_5.add(cnc + variant + cnc)
+                level_5.add(cnc + variant + ncn)
+                level_5.add(ncn + variant + cnc)
+
+    write_to_file(level_5, output_file)
+    if verbose:
+        print(f"Level 4 Variations: {len(level_5)}")
+    return level_5
 
 def generate_variants(password, level, verbose, output_file):
     # Starting with level 1 character substitutions
+    variants = set()
+    level_2 = set()
     variants = character_substitutions(password, output_file, verbose)
 
     # Apply transformations based on the level
     if level >= 2:
-        level_2_patterns(variants, output_file, verbose)
+        level_2 = level_2_patterns(variants, output_file, verbose)
+        for variant in variants:
+            level_2.add(variant)
     if level >= 3:
-        level_3_patterns(variants, output_file, verbose)
-    if level == 4:
+        level_3_patterns(level_2, output_file, verbose)
+    if level >= 4:
         level_4_patterns(variants, output_file, verbose)
+    if level == 5:
+        level_5_patterns(variants, output_file, verbose)
 
     return variants
