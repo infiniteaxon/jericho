@@ -102,17 +102,22 @@ def level_5_patterns(variants, output_file, verbose):
                 nc = number + char
                 cnc = cn + char
                 ncn = nc + number
-                level_5.add(cn + variant)
-                level_5.add(variant + nc)
                 level_5.add(variant + cnc)
                 level_5.add(variant + ncn)
+                level_5.add(cnc + variant)
+                level_5.add(ncn + variant)
                 level_5.add(cn + variant + cnc)
                 level_5.add(nc + variant + cnc)
+                level_5.add(cn + variant + ncn)
+                level_5.add(nc + variant + ncn)
                 level_5.add(cnc + variant + nc)
                 level_5.add(cnc + variant + cn)
+                level_5.add(ncn + variant + nc)
+                level_5.add(ncn + variant + cn)
                 level_5.add(cnc + variant + cnc)
                 level_5.add(cnc + variant + ncn)
                 level_5.add(ncn + variant + cnc)
+                level_5.add(ncn + variant + ncn)
 
     write_to_file(level_5, output_file)
     if verbose:
