@@ -17,8 +17,8 @@ substitutions = {
 }
 
 # Numerical patterns and special characters for enhancing password strength
-number_patterns = ['666', '777', '888', '999', '1234', '4321', '12345', '54321']
-number_patterns += [str(x) for x in range(0, 321)]
+number_patterns = ['69', '111', '222', '333', '420', '444', '555', '666', '777', '888', '999', '123', '321', '1234', '4321', '12345', '54321', '123456', '654321']
+number_patterns += [str(x) for x in range(0, 33)]
 number_patterns += [str(x) for x in range(1960, 2024)]
 special_chars = ['!', '@', '#', '$', '%', '^', '&', '*', '-', '_', '+']
 
@@ -47,12 +47,16 @@ def character_substitutions(password, output_file, verbose):
 
 def level_2_patterns(variants, output_file, verbose):
     level_2 = set()
-    for variant in variants:
-        for number in number_patterns:
-            vn = variant + number
-            level_2.add(vn)
-            level_2.add(number + variant)
-            level_2.add(number + vn)
+    for v in variants:
+        for n in number_patterns:
+            for c in special_chars:
+                level_2.add(v + n)
+                level_2.add(n + v)
+                level_2.add(v + c)
+                level_2.add(c + v)
+                level_2.add(n + v + c)
+                level_2.add(c + v + n)
+                
     write_to_file(level_2, output_file)
     if verbose:
         print(f"Level 2 Variations: {len(level_2)}")
@@ -60,16 +64,18 @@ def level_2_patterns(variants, output_file, verbose):
 
 def level_3_patterns(variants, output_file, verbose):
     level_3 = set()
-    for variant in variants:
-        for char in special_chars:
-            cv = char + variant
-            cc = char + char
-            level_3.add(cv)
-            level_3.add(variant + char)
-            level_3.add(cv + char)
-            level_3.add(char + cv + cc)
-            level_3.add(cv + cc)
-            level_3.add(char + cv + char)
+    for v in variants:
+        for n in number_patterns:
+            for c in special_chars:
+                level_3.add(v + n + c)
+                level_3.add(v + c + n)
+                level_3.add(n + c + v)
+                level_3.add(c + n + v)
+                level_3.add(v + n + c + c)
+                level_3.add(v + c + n + c)
+                level_3.add(n + c + v + c)
+                level_3.add(c + n + v + c)
+                
     write_to_file(level_3, output_file)
     if verbose:
         print(f"Level 3 Variations: {len(level_3)}")
@@ -77,16 +83,18 @@ def level_3_patterns(variants, output_file, verbose):
 
 def level_4_patterns(variants, output_file, verbose):
     level_4 = set()
-    for variant in variants:
-        for number in number_patterns:
-            for char in special_chars:
-                cvn = char + variant + number
-                nc = number + char
-                level_4.add(cvn)
-                level_4.add(nc + variant)
-                level_4.add(variant + nc)
-                level_4.add(cvn + char)
-                level_4.add(char + number + variant + nc)
+    for v in variants:
+        for n in number_patterns:
+            for c in special_chars:
+                level_4.add(v + c + c)
+                level_4.add(v + n + n)
+                level_4.add(c + c + v)
+                level_4.add(n + n + v)
+                level_4.add(c + v + c + c)
+                level_4.add(c + v + c + n)
+                level_4.add(c + v + n + c)
+                level_4.add(c + c + v + c + c)
+
 
     write_to_file(level_4, output_file)
     if verbose:
@@ -95,29 +103,25 @@ def level_4_patterns(variants, output_file, verbose):
 
 def level_5_patterns(variants, output_file, verbose):
     level_5 = set()
-    for variant in variants:
-        for number in number_patterns:
-            for char in special_chars:
-                cn = char + number
-                nc = number + char
-                cnc = cn + char
-                ncn = nc + number
-                level_5.add(variant + cnc)
-                level_5.add(variant + ncn)
-                level_5.add(cnc + variant)
-                level_5.add(ncn + variant)
-                level_5.add(cn + variant + cnc)
-                level_5.add(nc + variant + cnc)
-                level_5.add(cn + variant + ncn)
-                level_5.add(nc + variant + ncn)
-                level_5.add(cnc + variant + nc)
-                level_5.add(cnc + variant + cn)
-                level_5.add(ncn + variant + nc)
-                level_5.add(ncn + variant + cn)
-                level_5.add(cnc + variant + cnc)
-                level_5.add(cnc + variant + ncn)
-                level_5.add(ncn + variant + cnc)
-                level_5.add(ncn + variant + ncn)
+    for v in variants:
+        for n in number_patterns:
+            for c in special_chars:
+                level_5.add(v + c + n + c)
+                level_5.add(v + n + c + n)
+                level_5.add(c + n + c + v)
+                level_5.add(n + c + n + v)
+                level_5.add(c + n + v + c + n + c)
+                level_5.add(n + c + v + c + n + c)
+                level_5.add(c + n + v + n + c + n)
+                level_5.add(n + c + v + n + c + n)
+                level_5.add(c + n + c + v + n + c)
+                level_5.add(c + n + c + v + c + n)
+                level_5.add(n + c + n + v + n + c)
+                level_5.add(n + c + n + v + c + n)
+                level_5.add(c + n + c + v + c + n + c)
+                level_5.add(c + n + c + v + n + c + n)
+                level_5.add(n + c + n + v + c + n + c)
+                level_5.add(n + c + n + v + n + c + n)
 
     write_to_file(level_5, output_file)
     if verbose:
@@ -127,16 +131,13 @@ def level_5_patterns(variants, output_file, verbose):
 def generate_variants(password, level, verbose, output_file):
     # Starting with level 1 character substitutions
     variants = set()
-    level_2 = set()
     variants = character_substitutions(password, output_file, verbose)
 
     # Apply transformations based on the level
     if level >= 2:
-        level_2 = level_2_patterns(variants, output_file, verbose)
-        for variant in variants:
-            level_2.add(variant)
+        level_2_patterns(variants, output_file, verbose)
     if level >= 3:
-        level_3_patterns(level_2, output_file, verbose)
+        level_3_patterns(variants, output_file, verbose)
     if level >= 4:
         level_4_patterns(variants, output_file, verbose)
     if level == 5:
