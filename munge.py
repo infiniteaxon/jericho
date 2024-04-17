@@ -121,7 +121,7 @@ def level_5_patterns(variants, output_file, verbose):
 
     write_to_file(level_5, output_file)
     if verbose:
-        print(f"Level 4 Variations: {len(level_5)}")
+        print(f"Level 5 Variations: {len(level_5)}")
     return level_5
 
 def generate_variants(password, level, verbose, output_file):
