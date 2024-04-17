@@ -1,5 +1,19 @@
 import argparse
+import multiprocessing
 from munge import generate_variants
+import os
+
+def process_password(password, level, verbose, output, index):
+    temp_output = f"{output}_temp_{index}"
+    generate_variants(password, level, verbose, temp_output)
+    return temp_output
+
+def merge_files(temp_files, final_output):
+    with open(final_output, 'w') as outfile:
+        for fname in temp_files:
+            with open(fname) as infile:
+                outfile.write(infile.read())
+            os.remove(fname)  # Optionally remove the temp file after merging
 
 def main():
     # Setup command line argument parsing
@@ -22,15 +36,23 @@ def main():
             print(f"Error: Input file {args.input} not found.")
             return
     else:
-        passwords = ['pass']  # Default password list if no file provided
+        passwords = ['intruder']  # Default password list if no file provided
 
-    # Generate variants for each password
-    for password in passwords:
-        generate_variants(password, args.level, args.verbose, args.output)
+    # Setup multiprocessing
+    pool = multiprocessing.Pool()
+    jobs = []
+    for index, password in enumerate(passwords):
+        job = pool.apply_async(process_password, (password, args.level, args.verbose, args.output, index))
+        jobs.append(job)
+    results = [job.get() for job in jobs]
+    pool.close()
+    pool.join()
+
+    # Merge all temporary files into the final output file
+    merge_files(results, args.output)
 
     if args.verbose:
         print(f"All variants have been written to: {args.output}.")
 
 if __name__ == "__main__":
     main()
-
