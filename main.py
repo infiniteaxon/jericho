@@ -3,9 +3,11 @@ from munge import generate_variants
 import os
 
 def process_passwords(passwords, level):
+    all_variants = set()
     for password in passwords:
         variants = generate_variants(password, level)
-        return variants
+        all_variants.update(variants)
+    return all_variants
 
 def main():
     parser = argparse.ArgumentParser(description="Password Variant Generator")
