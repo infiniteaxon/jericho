@@ -31,73 +31,65 @@ def generate_all_combinations(pwd):
 def character_substitutions(password):
     return set(generate_all_combinations(password))
 
-def level_2_patterns(variants):
+def level_2_patterns(v):
     level_2 = set()
-    for v in variants:
-        for n in number_patterns:
-            for c in special_chars:
-                level_2.add(v + n)
-                level_2.add(n + v)
-                level_2.add(v + c)
-                level_2.add(c + v)
-                level_2.add(n + v + c)
-                level_2.add(c + v + n)
+    all_options = number_patterns + special_chars
+    for n in number_patterns:
+        for c in special_chars:
+            level_2.add(v + n)
+            level_2.add(n + v)
+            level_2.add(v + c)
+            level_2.add(c + v)
+    for s in all_options:
+        for t in all_options:
+            level_2.add(v + s + t)
+            level_2.add(s + v + t)
+            level_2.add(s + t + v)
     return level_2
 
-def level_3_patterns(variants):
+def level_3_patterns(v):
     level_3 = set()
-    for v in variants:
-        for n in number_patterns:
-            for c in special_chars:
-                level_3.add(v + n + c)
-                level_3.add(v + c + n)
-                level_3.add(n + c + v)
-                level_3.add(c + n + v)
-                level_3.add(v + n + c + c)
-                level_3.add(v + c + n + c)
-                level_3.add(n + c + v + c)
-                level_3.add(c + n + v + c)
+    all_options = number_patterns + special_chars
+    for s in all_options:
+        for t in all_options:
+            for f in all_options:
+                level_3.add(v + s + t + f)
+                level_3.add(s + v + t + f)
+                level_3.add(s + t + v + f)
+                level_3.add(s + t + f + v)
     return level_3
 
-def level_4_patterns(variants):
+def level_4_patterns(v):
     level_4 = set()
-    for v in variants:
-        for n in number_patterns:
-            for c in special_chars:
-                level_4.add(v + c + c)
-                level_4.add(v + n + n)
-                level_4.add(c + c + v)
-                level_4.add(n + n + v)
-                level_4.add(v + n + n + n)
-                level_4.add(c + v + c + c)
-                level_4.add(c + v + c + n)
-                level_4.add(c + v + n + c)
-                level_4.add(v + c + n + n + n)
-                level_4.add(v + c + n + n + n + c)
+    all_options = number_patterns + special_chars
+    for s in all_options:
+        for t in all_options:
+            for f in all_options:
+                for th in all_options:
+                    level_4.add(v + s + t + f + th)
+                    level_4.add(s + v + t + f + th)
+                    level_4.add(s + t + v + f + th)
+                    level_4.add(s + t + f + v + th)
+                    level_4.add(s + t + f + th + v)
     return level_4
 
-def level_5_patterns(variants):
+
+def level_5_patterns(v):
     level_5 = set()
-    for v in variants:
-        for n in number_patterns:
-            for c in special_chars:
-                level_5.add(v + c + n + c)
-                level_5.add(v + n + c + n)
-                level_5.add(c + n + c + v)
-                level_5.add(n + c + n + v)
-                level_5.add(c + n + v + c + n + c)
-                level_5.add(n + c + v + c + n + c)
-                level_5.add(c + n + v + n + c + n)
-                level_5.add(n + c + v + n + c + n)
-                level_5.add(c + n + c + v + n + c)
-                level_5.add(c + n + c + v + c + n)
-                level_5.add(n + c + n + v + n + c)
-                level_5.add(n + c + n + v + c + n)
-                level_5.add(c + n + c + v + c + n + c)
-                level_5.add(c + n + c + v + n + c + n)
-                level_5.add(n + c + n + v + c + n + c)
-                level_5.add(n + c + n + v + n + c + n)
+    all_options = number_patterns + special_chars
+    for s in all_options:
+        for t in all_options:
+            for f in all_options:
+                for th in all_options:
+                    for sth in all_options:
+                        level_5.add(v + s + t + f + th + sth)
+                        level_5.add(s + v + t + f + th + sth)
+                        level_5.add(s + t + v + f + th + sth)
+                        level_5.add(s + t + f + v + th + sth)
+                        level_5.add(s + t + f + th + v + sth)
+                        level_5.add(s + t + f + th + sth + v)
     return level_5
+
 
 def process_variant(variant, level):
     final_variants = set()
@@ -113,14 +105,12 @@ def process_variant(variant, level):
     return final_variants
 
 def generate_variants(password, level):  
+    final_variants = set(password)
     variants = character_substitutions(password)  # This should return a set of initial variants
-    with multiprocessing.Pool() as pool:
+    with multiprocessing.Pool(processes=6) as pool:
         # Process each variant through process_variant function using starmap
         results = pool.starmap(process_variant, [(variant, level) for variant in variants])
-
-    # Create a set to collect all final variants
-    final_variants = set()
     for result in results:
-        final_variants.update(result)  # Assuming each result is a set of variants
+        final_variants.update(result)
 
     return final_variants
